@@ -4,6 +4,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <unistd.h>
+#include <sys/time.h>
 
 #define BAR_HEIGHT 24
 #define PADDING 10
@@ -140,12 +141,12 @@ void draw_bar(Display *dpy, Window win, GC gc, XFontStruct *font, int width, int
                     int cmd_len = cmd_end - ptr - 1;
                     if (cmd_len >= 511) cmd_len = 511;
                     snprintf(command, sizeof(command), "%.*s", cmd_len, ptr + 1);
-                    snprintf(display_text, sizeof(display_text), "%s", cmd_end + 1);
+                    snprintf(display_text, sizeof(display_text), "%.*s", (int)sizeof(display_text)-1, cmd_end + 1);
                 } else {
-                    snprintf(display_text, sizeof(display_text), "%s", ptr);
+                    snprintf(display_text, sizeof(display_text), "%.*s", (int)sizeof(display_text)-1, ptr);
                 }
             } else {
-                snprintf(display_text, sizeof(display_text), "%s", ptr);
+                snprintf(display_text, sizeof(display_text), "%.*s", (int)sizeof(display_text)-1, ptr);
             }
 
             if (strlen(display_text) > 0) {
@@ -158,7 +159,7 @@ void draw_bar(Display *dpy, Window win, GC gc, XFontStruct *font, int width, int
                     if (strlen(command) > 0 && num_regions < 20) {
                         regions[num_regions].x = current_x;
                         regions[num_regions].width = text_width;
-                        snprintf(regions[num_regions].command, sizeof(regions[num_regions].command), "%s", command);
+                        snprintf(regions[num_regions].command, sizeof(regions[num_regions].command), "%.*s", (int)sizeof(regions[num_regions].command)-1, command);
                         num_regions++;
                     }
                     current_x += text_width + PADDING;
@@ -196,7 +197,7 @@ void draw_bar(Display *dpy, Window win, GC gc, XFontStruct *font, int width, int
                     if (strlen(r_cmds[i]) > 0 && num_regions < 20) {
                         regions[num_regions].x = current_right_x;
                         regions[num_regions].width = r_widths[i];
-                        snprintf(regions[num_regions].command, sizeof(regions[num_regions].command), "%s", r_cmds[i]);
+                        snprintf(regions[num_regions].command, sizeof(regions[num_regions].command), "%.*s", (int)sizeof(regions[num_regions].command)-1, r_cmds[i]);
                         num_regions++;
                     }
                 }
@@ -262,12 +263,18 @@ int main() {
             }
         }
 
+        XRaiseWindow(dpy, win);
+
         fd_set fds;
         FD_ZERO(&fds);
         FD_SET(ConnectionNumber(dpy), &fds);
         FD_SET(STDIN_FILENO, &fds);
 
-        if (select(ConnectionNumber(dpy) + 1, &fds, NULL, NULL, NULL) > 0) {
+        struct timeval tv;
+        tv.tv_sec = 0;
+        tv.tv_usec = 500000;
+
+        if (select(ConnectionNumber(dpy) + 1, &fds, NULL, NULL, &tv) > 0) {
             if (FD_ISSET(STDIN_FILENO, &fds)) {
                 if (fgets(buffer, sizeof(buffer), stdin) != NULL) {
                     buffer[strcspn(buffer, "\n")] = 0;

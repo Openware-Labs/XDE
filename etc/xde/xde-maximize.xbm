@@ -1,0 +1,4 @@
+#define xde_maximize_width 8
+#define xde_maximize_height 8
+static unsigned char xde_maximize_bits[] = {
+   0xff, 0x81, 0x81, 0x81, 0x81, 0x81, 0x81, 0xff };

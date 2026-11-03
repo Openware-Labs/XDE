@@ -10,9 +10,9 @@ Active — Working.
 
 ## Releases
 
-v0.1.1 — Wi-Fi icon in XDE Panel.
+- `v0.1.1`
 
-v0.1.0 — First Release.
+- `v0.1.0`
 
 ## Features
 
@@ -158,9 +158,13 @@ Override system defaults by creating files in your home directory:
 
 ## Default Keybindings
 
-- `Shift + Alt + T` — Open `xterm`
-- `Super L` — Open `xde-menu` (Application Launcher)
-- `Alt + F4` — Close the active window
+- `Shift + Alt + T` — Open xterm
+- `Super L` — Open xde-menu (Application Launcher)
+- `Alt + F4` — Kill the active window
+- `Alt + Up` — Move the active window up
+- `Alt + Down` — Move the active window down
+- `Alt + Home` — Center the active window on screen
+- `Alt + Shift + Q` — Log out of XDE
 
 ## Project Layout
 

@@ -54,8 +54,8 @@ ButtonBindings
     Button1 = : icon  : f.iconify
 }
 
-RightTitleButton "/etc/xde/xde-close.xbm" = f.delete
-
-NoTitle { "bar" }
-NoBorder { "bar" }
-MakeSticky { "bar" }
+NoDefaults
+LeftTitleButton "/etc/xde/xde-close.xbm" = f.delete
+LeftTitleButton "/etc/xde/xde-maximize.xbm" = f.exec "xde-maximize &"
+LeftTitleButton ":iconify" = f.iconify
+RightTitleButton ":resize" = f.resize

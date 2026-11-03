@@ -4,6 +4,15 @@
 "/usr/local/bin/xde-launcher"
     Super_L
 
+"xdotool getwindowfocus windowmove --relative 0 50"
+    Alt + Down
+
+"xdotool getwindowfocus windowmove --relative 0 -50"
+    Alt + Up
+
+"xdotool getwindowfocus windowmove 100 100"
+    Alt + Home
+
 "xdotool getwindowfocus windowkill"
     Alt + F4
 

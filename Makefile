@@ -31,6 +31,7 @@ install: xde-panel xde-menu
 	install -m 755 bin/xde-session             $(BINDIR)/xde-session
 	install -m 755 bin/xde-apps                $(BINDIR)/xde-apps
 	install -m 755 bin/xde-bar                 $(BINDIR)/xde-bar
+	install -m 755 bin/xde-maximize            $(BINDIR)/xde-maximize
 	install -m 755 xde-panel                   $(BINDIR)/xde-panel
 	install -m 755 xde-menu                    $(BINDIR)/xde-menu
 	install -m 755 bin/xde-launcher            $(BINDIR)/xde-launcher
@@ -38,6 +39,7 @@ install: xde-panel xde-menu
 	install -m 644 etc/xde/Xresources          $(ETCDIR)/Xresources
 	install -m 644 etc/xde/polka.xbm           $(ETCDIR)/polka.xbm
 	install -m 644 etc/xde/xde-close.xbm       $(ETCDIR)/xde-close.xbm
+	install -m 644 etc/xde/xde-maximize.xbm    $(ETCDIR)/xde-maximize.xbm
 	install -m 644 etc/xde/wifi_0.xbm          $(ETCDIR)/wifi_0.xbm
 	install -m 644 etc/xde/wifi_1.xbm          $(ETCDIR)/wifi_1.xbm
 	install -m 644 etc/xde/wifi_2.xbm          $(ETCDIR)/wifi_2.xbm
@@ -52,6 +54,7 @@ uninstall:
 	rm -f  $(BINDIR)/xde-session
 	rm -f  $(BINDIR)/xde-apps
 	rm -f  $(BINDIR)/xde-bar
+	rm -f  $(BINDIR)/xde-maximize
 	rm -f  $(BINDIR)/xde-panel
 	rm -f  $(BINDIR)/xde-menu
 	rm -f  $(BINDIR)/xde-launcher

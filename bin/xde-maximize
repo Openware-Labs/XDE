@@ -1,0 +1,32 @@
+#!/bin/sh
+
+WIN=$(xdotool getwindowfocus)
+if [ -z "$WIN" ] || [ "$WIN" = "0" ]; then exit 0; fi
+
+TMP="/tmp/xde-max-$WIN"
+
+if [ -f "$TMP" ]; then
+    read OLD_X OLD_Y OLD_W OLD_H < "$TMP"
+    xdotool windowmove $WIN $OLD_X $OLD_Y
+    xdotool windowsize $WIN $OLD_W $OLD_H
+    rm "$TMP"
+else
+    eval $(xdotool getwindowgeometry --shell $WIN)
+    echo "$X $Y $WIDTH $HEIGHT" > "$TMP"
+    
+    PARENT=$(xwininfo -id $WIN -tree | grep "Parent window id:" | awk '{print $4}')
+    
+    FRAME_Y=$(xwininfo -id $PARENT | grep "Absolute upper-left Y" | awk '{print $4}')
+    CLIENT_Y=$(xwininfo -id $WIN | grep "Absolute upper-left Y" | awk '{print $4}')
+    
+    TITLE_HEIGHT=$((CLIENT_Y - FRAME_Y))
+    
+    SCREEN_W=$(xdpyinfo | grep dimensions | awk '{print $2}' | cut -d'x' -f1)
+    SCREEN_H=$(xdpyinfo | grep dimensions | awk '{print $2}' | cut -d'x' -f2)
+    
+    NEW_Y=24
+    NEW_H=$((SCREEN_H - 24 - TITLE_HEIGHT))
+    
+    xdotool windowmove $WIN 0 $NEW_Y
+    xdotool windowsize $WIN $SCREEN_W $NEW_H
+fi
