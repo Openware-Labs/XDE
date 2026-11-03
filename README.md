@@ -166,35 +166,6 @@ Override system defaults by creating files in your home directory:
 - `Alt + Home` — Center the active window on screen
 - `Alt + Shift + Q` — Log out of XDE
 
-## Project Layout
-
-```Text
-    bin/
-      xde-session      Session startup script
-      xde-bar          Shell script generating panel data
-      xde-apps         Shell script parsing .desktop files
-      xde-launcher     Wrapper script for the menu
-
-    src/
-      xde-bar.c        Source code for the custom panel (xde-panel)
-      xde-menu.c       Source code for the custom launcher (xde-menu)
-
-    etc/xde/
-      twmrc            Default window manager configuration
-      Xresources       Default X11 resources
-      xbindkeysrc      Default global keybindings
-      polka.xbm        Wallpaper bitmap pattern
-      xde-close.xbm    Custom close button bitmap
-      wifi_0.xbm       Disconnected Wi-Fi icon
-      wifi_1.xbm       Weak Wi-Fi signal icon
-      wifi_2.xbm       Medium Wi-Fi signal icon
-      wifi_3.xbm       Good Wi-Fi signal icon
-      wifi_4.xbm       Excellent Wi-Fi signal icon
-
-    share/xsessions/
-      xde.desktop      Display manager session entry
-```
-
 ## License
 
 MIT. See [LICENSE](/LICENSE).
