@@ -158,12 +158,22 @@ Override system defaults by creating files in your home directory:
 
 ## Default Keybindings
 
-- `Shift + Alt + T` — Open xterm
-- `Super L` — Open xde-menu (Application Launcher)
+### Applications
+- `Shift + Alt + T` — Open `xterm`
+- `Super L` — Open `xde-menu` (Application Launcher)
+
+### Volume Control
+- `XF86AudioRaiseVolume` — Increase volume
+- `XF86AudioLowerVolume` — Decrease volume
+- `XF86AudioMute` — Toggle mute
+
+### Window Management
 - `Alt + F4` — Kill the active window
 - `Alt + Up` — Move the active window up
 - `Alt + Down` — Move the active window down
 - `Alt + Home` — Center the active window on screen
+
+### System
 - `Alt + Shift + Q` — Log out of XDE
 
 ## License
