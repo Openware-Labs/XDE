@@ -35,14 +35,6 @@ v0.1.0 — First Release.
 - `xdotool` (window manipulation for the panel)
 - `clipmenu`, `xclip` (clipboard management)
 
-### Arch Linux
-
-    sudo pacman -S base-devel libx11 twm xterm xorg-apps xorg-xrdb xorg-xsetroot xbindkeys xdotool clipmenu
-
-### Debian/Ubuntu
-
-    sudo apt install build-essential libx11-dev twm xterm x11-apps x11-xserver-utils xbindkeys xdotool clipmenu
-
 ## X11 Utilities
 
 The following is a comprehensive list of official X.Org utilities and applications. Most are included in the `xorg-apps` group (Arch) or `x11-apps` / `x11-utils` packages (Debian/Ubuntu). You can install individual packages if you prefer a minimal setup.
@@ -145,9 +137,9 @@ Override system defaults by creating files in your home directory:
 
 ## Default Keybindings
 
-- `Alt + Return` — Open `xterm`
-- `Alt + D` — Open `xde-menu` (Application Launcher)
-- `Alt + Q` — Close the active window
+- `Shift + Alt + T` — Open `xterm`
+- `Super L` — Open `xde-menu` (Application Launcher)
+- `Alt + F4` — Close the active window
 
 ## Project Layout
 
