@@ -1,6 +1,6 @@
 PREFIX  ?= /usr/local
 DESTDIR ?=
-VERSION := 0.1.0
+VERSION := 0.1.1
 
 BINDIR := $(DESTDIR)$(PREFIX)/bin
 ETCDIR := $(DESTDIR)/etc/xde
@@ -31,7 +31,6 @@ install: xde-panel xde-menu
 	install -m 755 bin/xde-session             $(BINDIR)/xde-session
 	install -m 755 bin/xde-apps                $(BINDIR)/xde-apps
 	install -m 755 bin/xde-bar                 $(BINDIR)/xde-bar
-	install -m 755 bin/xde-bar-exec            $(BINDIR)/xde-bar-exec
 	install -m 755 xde-panel                   $(BINDIR)/xde-panel
 	install -m 755 xde-menu                    $(BINDIR)/xde-menu
 	install -m 755 bin/xde-launcher            $(BINDIR)/xde-launcher
@@ -39,6 +38,11 @@ install: xde-panel xde-menu
 	install -m 644 etc/xde/Xresources          $(ETCDIR)/Xresources
 	install -m 644 etc/xde/polka.xbm           $(ETCDIR)/polka.xbm
 	install -m 644 etc/xde/xde-close.xbm       $(ETCDIR)/xde-close.xbm
+	install -m 644 etc/xde/wifi_0.xbm          $(ETCDIR)/wifi_0.xbm
+	install -m 644 etc/xde/wifi_1.xbm          $(ETCDIR)/wifi_1.xbm
+	install -m 644 etc/xde/wifi_2.xbm          $(ETCDIR)/wifi_2.xbm
+	install -m 644 etc/xde/wifi_3.xbm          $(ETCDIR)/wifi_3.xbm
+	install -m 644 etc/xde/wifi_4.xbm          $(ETCDIR)/wifi_4.xbm
 	install -m 644 etc/xde/xbindkeysrc         $(ETCDIR)/xbindkeysrc
 	install -m 644 share/xsessions/xde.desktop $(XSDIR)/xde.desktop
 	@echo "XDE v$(VERSION) installed."
@@ -48,12 +52,11 @@ uninstall:
 	rm -f  $(BINDIR)/xde-session
 	rm -f  $(BINDIR)/xde-apps
 	rm -f  $(BINDIR)/xde-bar
-	rm -f  $(BINDIR)/xde-bar-exec
 	rm -f  $(BINDIR)/xde-panel
 	rm -f  $(BINDIR)/xde-menu
 	rm -f  $(BINDIR)/xde-launcher
 	rm -f  $(XSDIR)/xde.desktop
-	rm -rf $(ETCDIR)
+	rm -rf $(ETCDIR)/xde/
 	@echo "XDE removed."
 
 test: xde-panel xde-menu

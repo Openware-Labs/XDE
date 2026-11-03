@@ -1,6 +1,6 @@
 #!/bin/sh
 
-XDE_VERSION="0.1.0"
+XDE_VERSION="0.1.1"
 
 if [ -z "$DISPLAY" ]; then
     export DISPLAY=":0"
@@ -34,6 +34,10 @@ else
 fi
 
 sleep 0.5
+
+if command -v xss-lock >/dev/null 2>&1; then
+    xss-lock --transfer-sleep-lock -- xlock -mode blank +resetsaver -echokeys -echokey "*" +description -username "Name: " -info "$(whoami)" -validate "Password: " &
+fi
 
 if [ -f "$XDE_ETC/polka.xbm" ]; then
     xsetroot -bitmap "$XDE_ETC/polka.xbm" -fg "#FF69B4" -bg "#FFFFFF"

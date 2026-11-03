@@ -1,27 +1,70 @@
 #!/bin/sh
 
+PAGE_FILE="/tmp/xde-bar-page"
+MAX_PER_PAGE=3
+
 while true; do
     TIME=$(date +"%H:%M")
     WINDOWS=""
-    COUNT=0
     
+    WIFI_ICON=""
+    if command -v nmcli >/dev/null 2>&1; then
+        SIGNAL=$(LC_ALL=C nmcli -t -f ACTIVE,SIGNAL dev wifi | grep '^yes' | cut -d':' -f2)
+        if [ -n "$SIGNAL" ]; then
+            if [ "$SIGNAL" -ge 75 ]; then WIFI_ICON="~wifi_4~"
+            elif [ "$SIGNAL" -ge 50 ]; then WIFI_ICON="~wifi_3~"
+            elif [ "$SIGNAL" -ge 25 ]; then WIFI_ICON="~wifi_2~"
+            else WIFI_ICON="~wifi_1~"
+            fi
+        else
+            WIFI_ICON="~wifi_0~"
+        fi
+    fi
+
+    > /tmp/xde-all-windows.tmp
     for id in $(xdotool search --onlyvisible --name "" 2>/dev/null); do
         name=$(xdotool getwindowname "$id" 2>/dev/null)
+        if [ -z "$name" ] || [ "$name" = "bar" ] || [ "$name" = "XDE" ]; then continue; fi
+        if echo "$name" | grep -qE "^(xroot|wrapper|xfwm|twm|Desktop)"; then continue; fi
         
-        if [ -z "$name" ] || [ "$name" = "bar" ] || [ "$name" = "XDE" ]; then
-            continue
+        short_name=$(echo "$name" | cut -c 1-20)
+        if [ "$short_name" != "$name" ]; then
+            short_name="$short_name..."
         fi
         
-        if echo "$name" | grep -qE "^(xroot|wrapper|xfwm|twm|Desktop)"; then
-            continue
-        fi
-        
-        if [ "$COUNT" -lt 4 ]; then
-            WINDOWS="$WINDOWS|@xdotool windowraise $id; xdotool windowfocus $id@$name"
-            COUNT=$((COUNT + 1))
-        fi
+        echo "$id|$short_name" >> /tmp/xde-all-windows.tmp
     done
 
-            echo "@/usr/local/bin/xde-launcher@XDE Menu$WINDOWS | @xclock -digital &@$TIME"
+    TOTAL_WINDOWS=$(wc -l < /tmp/xde-all-windows.tmp | tr -d ' ')
+
+    PAGE=$(cat "$PAGE_FILE" 2>/dev/null || echo 0)
+    if [ "$PAGE" -lt 0 ]; then PAGE=0; fi
+    if [ "$TOTAL_WINDOWS" -eq 0 ]; then PAGE=0; fi
+    
+    MAX_PAGE=$(( (TOTAL_WINDOWS - 1) / MAX_PER_PAGE ))
+    if [ "$MAX_PAGE" -lt 0 ]; then MAX_PAGE=0; fi
+    if [ "$PAGE" -gt "$MAX_PAGE" ]; then PAGE=$MAX_PAGE; fi
+    echo "$PAGE" > "$PAGE_FILE"
+
+    start_line=$((PAGE * MAX_PER_PAGE + 1))
+    end_line=$((start_line + MAX_PER_PAGE - 1))
+
+    if [ "$PAGE" -gt 0 ]; then
+        WINDOWS="$WINDOWS|@echo $((PAGE-1)) > $PAGE_FILE@<"
+    fi
+
+    sed -n "${start_line},${end_line}p" /tmp/xde-all-windows.tmp | while IFS='|' read -r id short_name; do
+        echo "@xdotool windowraise $id; xdotool windowfocus $id@$short_name"
+    done > /tmp/xde-page-windows.tmp
+
+    while IFS= read -r w; do
+        WINDOWS="$WINDOWS|$w"
+    done < /tmp/xde-page-windows.tmp
+
+    if [ "$PAGE" -lt "$MAX_PAGE" ]; then
+        WINDOWS="$WINDOWS|@echo $((PAGE+1)) > $PAGE_FILE@>"
+    fi
+
+    echo "@/usr/local/bin/xde-launcher@XDE Menu$WINDOWS | $WIFI_ICON @xclock -digital &@$TIME"
     sleep 1
 done

@@ -21,3 +21,10 @@ XCalc*foreground: #d0d0d0
 
 XMessage*background: #1a1a1a
 XMessage*foreground: #d0d0d0
+
+xlock*background: #1a1a1a
+xlock*foreground: #FF69B4
+xlock*font: fixed
+xlock*echokeys: true
+xlock*echokey: *
+xlock*description: false

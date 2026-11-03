@@ -32,6 +32,68 @@ void draw_bar(Display *dpy, Window win, GC gc, XFontStruct *font, int width, int
         *last_pipe = '\0'; 
     }
 
+    int right_total_width = 0;
+    int r_count = 0;
+    char r_texts[20][256];
+    char r_cmds[20][256];
+    int r_widths[20];
+    int r_is_img[20];
+
+    if (strlen(right_part) > 0) {
+        char *p = right_part;
+        while (*p && r_count < 20) {
+            while (*p == ' ') p++;
+            if (!*p) break;
+
+            if (*p == '~') {
+                char *end = strchr(p + 1, '~');
+                if (end) {
+                    int len = end - p - 1;
+                    if (len >= 255) len = 255;
+                    snprintf(r_texts[r_count], sizeof(r_texts[r_count]), "%.*s", len, p + 1);
+                    r_is_img[r_count] = 1;
+                    r_widths[r_count] = 16;
+                    r_count++;
+                    p = end + 1;
+                } else break;
+            } else if (*p == '@') {
+                char *cmd_end = strchr(p + 1, '@');
+                if (cmd_end) {
+                    int cmd_len = cmd_end - p - 1;
+                    if (cmd_len >= 255) cmd_len = 255;
+                    snprintf(r_cmds[r_count], sizeof(r_cmds[r_count]), "%.*s", cmd_len, p + 1);
+
+                    char *text_start = cmd_end + 1;
+                    char *text_end = text_start;
+                    while (*text_end && *text_end != ' ' && *text_end != '~' && *text_end != '@') text_end++;
+                    int text_len = text_end - text_start;
+                    if (text_len >= 255) text_len = 255;
+                    snprintf(r_texts[r_count], sizeof(r_texts[r_count]), "%.*s", text_len, text_start);
+                    
+                    r_is_img[r_count] = 0;
+                    r_widths[r_count] = XTextWidth(font, r_texts[r_count], strlen(r_texts[r_count]));
+                    r_count++;
+                    p = text_end;
+                } else break;
+            } else {
+                char *text_end = p;
+                while (*text_end && *text_end != ' ' && *text_end != '~' && *text_end != '@') text_end++;
+                int text_len = text_end - p;
+                if (text_len >= 255) text_len = 255;
+                snprintf(r_texts[r_count], sizeof(r_texts[r_count]), "%.*s", text_len, p);
+                
+                r_cmds[r_count][0] = '\0';
+                r_is_img[r_count] = 0;
+                r_widths[r_count] = XTextWidth(font, r_texts[r_count], strlen(r_texts[r_count]));
+                r_count++;
+                p = text_end;
+            }
+            while (*p == ' ') p++;
+        }
+
+        for (int i = 0; i < r_count; i++) right_total_width += r_widths[i] + PADDING;
+    }
+
     int current_x = PADDING;
     char *ptr = temp;
 
@@ -42,37 +104,70 @@ void draw_bar(Display *dpy, Window win, GC gc, XFontStruct *font, int width, int
         char *next_pipe = strchr(ptr, '|');
         if (next_pipe) *next_pipe = '\0';
 
-        char display_text[512] = "";
-        char command[512] = "";
+        if (*ptr == '~') {
+            char *img_end = strchr(ptr + 1, '~');
+            if (img_end) {
+                char img_name[64];
+                int len = img_end - ptr - 1;
+                if (len >= 63) len = 63;
+                snprintf(img_name, sizeof(img_name), "%.*s", len, ptr + 1);
+                
+                char filepath[256];
+                snprintf(filepath, sizeof(filepath), "/etc/xde/%s.xbm", img_name);
+                
+                int x, y;
+                unsigned int w, h;
+                Pixmap bitmap;
+                
+                if (XReadBitmapFile(dpy, win, filepath, &w, &h, &bitmap, &x, &y) == BitmapSuccess) {
+                    XSetBackground(dpy, gc, 0x1a1a1a);
+                    XSetForeground(dpy, gc, 0xFF69B4);
+                    XCopyPlane(dpy, bitmap, win, gc, 0, 0, w, h, current_x, (BAR_HEIGHT - h) / 2, 1);
+                    current_x += w + PADDING;
+                    XFreePixmap(dpy, bitmap);
+                } else {
+                    current_x += PADDING;
+                }
+            }
+        } 
+        else {
+            char display_text[512] = "";
+            char command[512] = "";
 
-        if (*ptr == '@') {
-            char *cmd_end = strchr(ptr + 1, '@');
-            if (cmd_end) {
-                strncpy(command, ptr + 1, cmd_end - ptr - 1);
-                command[cmd_end - ptr - 1] = '\0';
-                strcpy(display_text, cmd_end + 1);
+            if (*ptr == '@') {
+                char *cmd_end = strchr(ptr + 1, '@');
+                if (cmd_end) {
+                    int cmd_len = cmd_end - ptr - 1;
+                    if (cmd_len >= 511) cmd_len = 511;
+                    snprintf(command, sizeof(command), "%.*s", cmd_len, ptr + 1);
+                    snprintf(display_text, sizeof(display_text), "%s", cmd_end + 1);
+                } else {
+                    snprintf(display_text, sizeof(display_text), "%s", ptr);
+                }
             } else {
-                strcpy(display_text, ptr);
-            }
-        } else {
-            strcpy(display_text, ptr);
-        }
-
-        if (strlen(display_text) > 0) {
-            XDrawString(dpy, win, gc, current_x, font_ascent + 6, display_text, strlen(display_text));
-            int text_width = XTextWidth(font, display_text, strlen(display_text));
-
-            if (strlen(command) > 0 && num_regions < 20) {
-                regions[num_regions].x = current_x;
-                regions[num_regions].width = text_width;
-                strcpy(regions[num_regions].command, command);
-                num_regions++;
+                snprintf(display_text, sizeof(display_text), "%s", ptr);
             }
 
-            current_x += text_width + PADDING;
+            if (strlen(display_text) > 0) {
+                int text_width = XTextWidth(font, display_text, strlen(display_text));
+                
+                if (current_x + text_width < width - right_total_width - 20) {
+                    XSetForeground(dpy, gc, 0xFF69B4);
+                    XDrawString(dpy, win, gc, current_x, font_ascent + 6, display_text, strlen(display_text));
+
+                    if (strlen(command) > 0 && num_regions < 20) {
+                        regions[num_regions].x = current_x;
+                        regions[num_regions].width = text_width;
+                        snprintf(regions[num_regions].command, sizeof(regions[num_regions].command), "%s", command);
+                        num_regions++;
+                    }
+                    current_x += text_width + PADDING;
+                }
+            }
         }
 
         if (next_pipe) {
+            XSetForeground(dpy, gc, 0xFF69B4);
             XDrawString(dpy, win, gc, current_x, font_ascent + 6, "|", 1);
             current_x += XTextWidth(font, "|", 1) + PADDING;
             ptr = next_pipe + 1;
@@ -81,36 +176,32 @@ void draw_bar(Display *dpy, Window win, GC gc, XFontStruct *font, int width, int
         }
     }
 
-    if (strlen(right_part) > 0) {
-        char *right_ptr = right_part;
-        while (*right_ptr == ' ') right_ptr++;
-
-        char display_text[512] = "";
-        char command[512] = "";
-
-        if (*right_ptr == '@') {
-            char *cmd_end = strchr(right_ptr + 1, '@');
-            if (cmd_end) {
-                strncpy(command, right_ptr + 1, cmd_end - right_ptr - 1);
-                command[cmd_end - right_ptr - 1] = '\0';
-                strcpy(display_text, cmd_end + 1);
+    if (r_count > 0) {
+        int current_right_x = width - right_total_width;
+        for (int i = 0; i < r_count; i++) {
+            if (r_is_img[i]) {
+                char filepath[256];
+                snprintf(filepath, sizeof(filepath), "/etc/xde/%s.xbm", r_texts[i]);
+                int x, y; unsigned int w, h; Pixmap bitmap;
+                if (XReadBitmapFile(dpy, win, filepath, &w, &h, &bitmap, &x, &y) == BitmapSuccess) {
+                    XSetBackground(dpy, gc, 0x1a1a1a);
+                    XSetForeground(dpy, gc, 0xFF69B4);
+                    XCopyPlane(dpy, bitmap, win, gc, 0, 0, w, h, current_right_x, (BAR_HEIGHT - h) / 2, 1);
+                    XFreePixmap(dpy, bitmap);
+                }
             } else {
-                strcpy(display_text, right_ptr);
+                if (strlen(r_texts[i]) > 0) {
+                    XSetForeground(dpy, gc, 0xFF69B4);
+                    XDrawString(dpy, win, gc, current_right_x, font_ascent + 6, r_texts[i], strlen(r_texts[i]));
+                    if (strlen(r_cmds[i]) > 0 && num_regions < 20) {
+                        regions[num_regions].x = current_right_x;
+                        regions[num_regions].width = r_widths[i];
+                        snprintf(regions[num_regions].command, sizeof(regions[num_regions].command), "%s", r_cmds[i]);
+                        num_regions++;
+                    }
+                }
             }
-        } else {
-            strcpy(display_text, right_ptr);
-        }
-
-        int right_width = XTextWidth(font, display_text, strlen(display_text));
-        int right_x = width - right_width - PADDING;
-        
-        XDrawString(dpy, win, gc, right_x, font_ascent + 6, display_text, strlen(display_text));
-
-        if (strlen(command) > 0 && num_regions < 20) {
-            regions[num_regions].x = right_x;
-            regions[num_regions].width = right_width;
-            strcpy(regions[num_regions].command, command);
-            num_regions++;
+            current_right_x += r_widths[i] + PADDING;
         }
     }
 }
