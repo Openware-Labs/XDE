@@ -10,13 +10,17 @@ Active — Working.
 
 ## Releases
 
+v0.1.1 — WiFi icon in XDE Panel.
+
 v0.1.0 — First Release.
 
 ## Features
 
 - **Pure X11 Session:** Runs `twm` as the window manager with classic X.Org tools.
-- **Custom Panel (`xde-panel`):** A lightweight top bar written in C/Xlib that displays the window list, clock, and clickable regions.
+- **Custom Panel (`xde-panel`):** A lightweight top bar written in C/Xlib that displays the window list (with pagination), Wi-Fi status (via XBM bitmaps), clock, and clickable regions.
 - **Custom Launcher (`xde-menu`):** A native application launcher written in C/Xlib that reads `.desktop` files, supports live filtering, and handles keyboard navigation.
+- **Dynamic Wi-Fi Status:** Monitors signal strength via `nmcli` and displays custom XBM icons (including a disconnected state).
+- **Screen Locking:** Integrated with `xss-lock` and `xlockmore` to lock the screen automatically on suspend/hibernate.
 - **Minimalist Aesthetic:** Polka dot wallpaper generated via `xsetroot` and cohesive Xresources theming.
 - **Global Keybindings:** Powered by `xbindkeys`.
 - **Clipboard Management:** Integrated with `clipmenu` and `xclip`.
@@ -34,6 +38,20 @@ v0.1.0 — First Release.
 - `xbindkeys` (global keybindings)
 - `xdotool` (window manipulation for the panel)
 - `clipmenu`, `xclip` (clipboard management)
+- `networkmanager` (for `nmcli`, used by the panel to read Wi-Fi signal)
+- `xss-lock`, `xlockmore` (screen locking on suspend/hibernate)
+
+### Arch Linux
+
+```Bash
+sudo pacman -S base-devel libx11 xorg-twm xterm xorg-apps xorg-xrdb xorg-xsetroot xbindkeys xdotool clipmenu networkmanager xss-lock xlockmore
+```
+
+### Debian/Ubuntu
+
+```Bash
+sudo apt install build-essential libx11-dev twm xterm x11-apps x11-xserver-utils xbindkeys xdotool clipmenu network-manager xss-lock xlockmore
+```
 
 ## X11 Utilities
 
@@ -118,14 +136,17 @@ The following is a comprehensive list of official X.Org utilities and applicatio
 
 ## Install
 
-    make
-    sudo make install
+```Bash
+sudo make install
+```
 
-Then log out and choose **XDE** in your display manager session menu (Ly, GDM, LightDM, SDDM).
+Then log out and choose **XDE** in your display manager session menu (GDM, LightDM, SDDM, Ly and others).
 
 ## Uninstall
 
-    sudo make uninstall
+```Bash
+sudo make uninstall
+```
 
 ## User Configuration
 
@@ -156,9 +177,14 @@ Override system defaults by creating files in your home directory:
     etc/xde/
       twmrc            Default window manager configuration
       Xresources       Default X11 resources
+      xbindkeysrc      Default global keybindings
       polka.xbm        Wallpaper bitmap pattern
       xde-close.xbm    Custom close button bitmap
-      xbindkeysrc      Default global keybindings
+      wifi_0.xbm       Disconnected Wi-Fi icon
+      wifi_1.xbm       Weak Wi-Fi signal icon
+      wifi_2.xbm       Medium Wi-Fi signal icon
+      wifi_3.xbm       Good Wi-Fi signal icon
+      wifi_4.xbm       Excellent Wi-Fi signal icon
 
     share/xsessions/
       xde.desktop      Display manager session entry
