@@ -10,7 +10,7 @@ Active — Working.
 
 ## Releases
 
-v0.1.1 — WiFi icon in XDE Panel.
+v0.1.1 — Wi-Fi icon in XDE Panel.
 
 v0.1.0 — First Release.
 
