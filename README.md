@@ -164,6 +164,7 @@ Override system defaults by creating files in your home directory:
 
 ## Project Layout
 
+```Text
     bin/
       xde-session      Session startup script
       xde-bar          Shell script generating panel data
@@ -188,6 +189,7 @@ Override system defaults by creating files in your home directory:
 
     share/xsessions/
       xde.desktop      Display manager session entry
+```
 
 ## License
 
