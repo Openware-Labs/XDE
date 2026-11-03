@@ -34,6 +34,7 @@ install: xde-panel xde-menu
 	install -m 755 bin/xde-maximize            $(BINDIR)/xde-maximize
 	install -m 755 xde-panel                   $(BINDIR)/xde-panel
 	install -m 755 xde-menu                    $(BINDIR)/xde-menu
+	install -m 755 bin/xde-volume              $(BINDIR)/xde-volume
 	install -m 755 bin/xde-launcher            $(BINDIR)/xde-launcher
 	install -m 644 etc/xde/twmrc               $(ETCDIR)/twmrc
 	install -m 644 etc/xde/Xresources          $(ETCDIR)/Xresources
@@ -45,6 +46,11 @@ install: xde-panel xde-menu
 	install -m 644 etc/xde/wifi_2.xbm          $(ETCDIR)/wifi_2.xbm
 	install -m 644 etc/xde/wifi_3.xbm          $(ETCDIR)/wifi_3.xbm
 	install -m 644 etc/xde/wifi_4.xbm          $(ETCDIR)/wifi_4.xbm
+	install -m 644 etc/xde/volume_0.xbm       $(ETCDIR)/volume_0.xbm
+	install -m 644 etc/xde/volume_1.xbm       $(ETCDIR)/volume_1.xbm
+	install -m 644 etc/xde/volume_2.xbm       $(ETCDIR)/volume_2.xbm
+	install -m 644 etc/xde/volume_3.xbm       $(ETCDIR)/volume_3.xbm
+	install -m 644 etc/xde/volume_4.xbm       $(ETCDIR)/volume_4.xbm
 	install -m 644 etc/xde/xbindkeysrc         $(ETCDIR)/xbindkeysrc
 	install -m 644 share/xsessions/xde.desktop $(XSDIR)/xde.desktop
 	@echo "XDE v$(VERSION) installed."
@@ -57,6 +63,7 @@ uninstall:
 	rm -f  $(BINDIR)/xde-maximize
 	rm -f  $(BINDIR)/xde-panel
 	rm -f  $(BINDIR)/xde-menu
+	rm -f  $(BINDIR)/xde-volume
 	rm -f  $(BINDIR)/xde-launcher
 	rm -f  $(XSDIR)/xde.desktop
 	rm -rf $(ETCDIR)/xde/

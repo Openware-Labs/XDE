@@ -6,6 +6,27 @@ MAX_PER_PAGE=3
 while true; do
     TIME=$(date +"%H:%M")
     WINDOWS=""
+
+    VOL_ICON=""
+    if command -v xde-volume >/dev/null 2>&1; then
+        VOL_INFO=$(xde-volume get 2>/dev/null)
+        if [ -n "$VOL_INFO" ]; then
+            VOL=$(echo "$VOL_INFO" | awk '{print $1}')
+            MUTED=$(echo "$VOL_INFO" | awk '{print $2}')
+            
+            if [ "$MUTED" = "muted" ] || [ -z "$VOL" ] || [ "$VOL" -eq 0 ]; then
+                VOL_ICON="~volume_0~"
+            elif [ "$VOL" -gt 100 ]; then
+                VOL_ICON="~volume_4~"
+            elif [ "$VOL" -ge 70 ]; then
+                VOL_ICON="~volume_3~"
+            elif [ "$VOL" -ge 30 ]; then
+                VOL_ICON="~volume_2~"
+            else
+                VOL_ICON="~volume_1~"
+            fi
+        fi
+    fi
     
     WIFI_ICON=""
     if command -v nmcli >/dev/null 2>&1; then
@@ -65,6 +86,6 @@ while true; do
         WINDOWS="$WINDOWS|@echo $((PAGE+1)) > $PAGE_FILE@>"
     fi
 
-    echo "@/usr/local/bin/xde-launcher@XDE Menu$WINDOWS | $WIFI_ICON @xclock -digital &@$TIME"
+    echo "@/usr/local/bin/xde-launcher@XDE Menu$WINDOWS | $VOL_ICON $WIFI_ICON @xclock -digital &@$TIME"
     sleep 1
 done

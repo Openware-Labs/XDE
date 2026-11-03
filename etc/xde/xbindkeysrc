@@ -4,6 +4,15 @@
 "/usr/local/bin/xde-launcher"
     Super_L
 
+"xde-volume up"
+    XF86AudioRaiseVolume
+
+"xde-volume down"
+    XF86AudioLowerVolume
+
+"xde-volume mute"
+    XF86AudioMute
+
 "xdotool getwindowfocus windowmove --relative 0 50"
     Alt + Down
 

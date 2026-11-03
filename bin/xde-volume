@@ -1,0 +1,74 @@
+#!/bin/sh
+
+ACTION="$1"
+
+detect_backend() {
+    if command -v wpctl >/dev/null 2>&1; then
+        echo "pipewire"
+    elif command -v pactl >/dev/null 2>&1; then
+        echo "pulseaudio"
+    elif command -v amixer >/dev/null 2>&1; then
+        echo "alsa"
+    else
+        echo "none"
+    fi
+}
+
+BACKEND=$(detect_backend)
+
+case "$BACKEND" in
+    pipewire)
+        case "$ACTION" in
+            get)
+                INFO=$(wpctl get-volume @DEFAULT_SINK@ 2>/dev/null)
+                if [ -z "$INFO" ]; then echo "0 muted"; exit 0; fi
+                VOL=$(echo "$INFO" | awk '{print int($2 * 100)}')
+                if echo "$INFO" | grep -q "MUTED"; then
+                    echo "$VOL muted"
+                else
+                    echo "$VOL unmuted"
+                fi
+                ;;
+            up)   wpctl set-volume @DEFAULT_SINK@ 5%+ ;;
+            down) wpctl set-volume @DEFAULT_SINK@ 5%- ;;
+            mute) wpctl set-mute @DEFAULT_SINK@ toggle ;;
+        esac
+        ;;
+    pulseaudio)
+        case "$ACTION" in
+            get)
+                VOL=$(pactl get-sink-volume @DEFAULT_SINK@ | grep -oP '\d+(?=%)' | head -1)
+                MUTED=$(pactl get-sink-mute @DEFAULT_SINK@ | grep -c "yes")
+                if [ -z "$VOL" ]; then echo "0 muted"; exit 0; fi
+                if [ "$MUTED" -eq 1 ]; then
+                    echo "$VOL muted"
+                else
+                    echo "$VOL unmuted"
+                fi
+                ;;
+            up)   pactl set-sink-volume @DEFAULT_SINK@ +5% ;;
+            down) pactl set-sink-volume @DEFAULT_SINK@ -5% ;;
+            mute) pactl set-sink-mute @DEFAULT_SINK@ toggle ;;
+        esac
+        ;;
+    alsa)
+        case "$ACTION" in
+            get)
+                VOL=$(amixer get Master | grep -oP '\d+(?=%)' | head -1)
+                MUTED=$(amixer get Master | grep -c '\[off\]')
+                if [ -z "$VOL" ]; then echo "0 muted"; exit 0; fi
+                if [ "$MUTED" -ge 1 ]; then
+                    echo "$VOL muted"
+                else
+                    echo "$VOL unmuted"
+                fi
+                ;;
+            up)   amixer set Master 5%+ unmute >/dev/null ;;
+            down) amixer set Master 5%- unmute >/dev/null ;;
+            mute) amixer set Master toggle >/dev/null ;;
+        esac
+        ;;
+    none)
+        echo "0 muted"
+        ;;
+esac

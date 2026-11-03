@@ -40,7 +40,7 @@ menu "WindowOps"
     "Close"       f.delete
     "Kill"        f.destroy
     "Minimize"    f.iconify
-    "Raise"       f.raise
+    "Maximize"    f.exec "xde-maximize &"
 }
 
 ButtonBindings
