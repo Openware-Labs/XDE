@@ -1,0 +1,9 @@
+*.swp
+*.swo
+*~
+.DS_Store
+/tmp/
+
+# Compiled binaries
+xde-panel
+xde-menu

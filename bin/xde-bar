@@ -1,0 +1,27 @@
+#!/bin/sh
+
+while true; do
+    TIME=$(date +"%H:%M")
+    WINDOWS=""
+    COUNT=0
+    
+    for id in $(xdotool search --onlyvisible --name "" 2>/dev/null); do
+        name=$(xdotool getwindowname "$id" 2>/dev/null)
+        
+        if [ -z "$name" ] || [ "$name" = "bar" ] || [ "$name" = "XDE" ]; then
+            continue
+        fi
+        
+        if echo "$name" | grep -qE "^(xroot|wrapper|xfwm|twm|Desktop)"; then
+            continue
+        fi
+        
+        if [ "$COUNT" -lt 4 ]; then
+            WINDOWS="$WINDOWS|@xdotool windowraise $id; xdotool windowfocus $id@$name"
+            COUNT=$((COUNT + 1))
+        fi
+    done
+
+            echo "@/usr/local/bin/xde-launcher@XDE Menu$WINDOWS | @xclock -digital &@$TIME"
+    sleep 1
+done

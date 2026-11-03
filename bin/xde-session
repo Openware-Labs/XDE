@@ -1,0 +1,60 @@
+#!/bin/sh
+
+XDE_VERSION="0.1.0"
+
+if [ -z "$DISPLAY" ]; then
+    export DISPLAY=":0"
+fi
+
+if [ -z "$XDE_ETC" ]; then
+    if [ -d "/etc/xde" ]; then
+        XDE_ETC="/etc/xde"
+    else
+        _src_etc="$(cd "$(dirname "$0")/.." 2>/dev/null && pwd)/etc/xde"
+        if [ -d "$_src_etc" ]; then
+            XDE_ETC="$_src_etc"
+        else
+            XDE_ETC="/etc/xde"
+        fi
+    fi
+fi
+
+[ -f "$HOME/.Xresources" ]   && xrdb -merge "$HOME/.Xresources"
+[ -f "$XDE_ETC/Xresources" ] && xrdb -merge "$XDE_ETC/Xresources"
+
+if [ -f "$HOME/.twmrc" ]; then
+    twm &
+    TWMPID=$!
+elif [ -f "$XDE_ETC/twmrc" ]; then
+    twm -f "$XDE_ETC/twmrc" &
+    TWMPID=$!
+else
+    twm &
+    TWMPID=$!
+fi
+
+sleep 0.5
+
+if [ -f "$XDE_ETC/polka.xbm" ]; then
+    xsetroot -bitmap "$XDE_ETC/polka.xbm" -fg "#FF69B4" -bg "#FFFFFF"
+else
+    xsetroot -solid "#1a1a1a"
+fi
+
+if [ -x /usr/local/bin/xde-panel ]; then
+    /usr/local/bin/xde-bar | /usr/local/bin/xde-panel &
+fi
+
+if command -v xbindkeys >/dev/null 2>&1; then
+    if [ -f "$HOME/.xbindkeysrc" ]; then
+        xbindkeys &
+    elif [ -f "$XDE_ETC/xbindkeysrc" ]; then
+        xbindkeys -f "$XDE_ETC/xbindkeysrc" &
+    fi
+fi
+
+command -v clipmenud >/dev/null 2>&1 && clipmenud &
+command -v xload  >/dev/null 2>&1 && xload  -geometry -0-60 &
+command -v xterm  >/dev/null 2>&1 && xterm -bg "#101010" -fg "#d0d0d0" -geometry 80x24+80+80 &
+
+wait $TWMPID

@@ -1,0 +1,8 @@
+[Desktop Entry]
+Type=Application
+Name=XDE
+Comment=X Desktop Environment - minimalist X11
+Exec=/usr/local/bin/xde-session
+TryExec=/usr/local/bin/xde-session
+Icon=xterm
+DesktopNames=XDE

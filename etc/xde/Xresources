@@ -1,0 +1,23 @@
+XTerm*faceName: monospace
+XTerm*faceSize: 11
+XTerm*background: #101010
+XTerm*foreground: #d0d0d0
+XTerm*cursorColor: #00ff88
+XTerm*saveLines: 2000
+XTerm*scrollBar: false
+XTerm*loginShell: true
+
+XClock*update: 1
+XClock*foreground: #d0d0d0
+XClock*background: #1a1a1a
+
+XLoad*update: 5
+XLoad*foreground: #00ff88
+XLoad*background: #1a1a1a
+XLoad*highlight: #00ff88
+
+XCalc*background: #1a1a1a
+XCalc*foreground: #d0d0d0
+
+XMessage*background: #1a1a1a
+XMessage*foreground: #d0d0d0

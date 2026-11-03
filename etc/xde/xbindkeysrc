@@ -1,0 +1,11 @@
+"xterm &"
+    Alt + Shift + t
+
+"/usr/local/bin/xde-launcher"
+    Super_L
+
+"xdotool getwindowfocus windowkill"
+    Alt + F4
+
+"pkill twm"
+    Alt + Shift + q

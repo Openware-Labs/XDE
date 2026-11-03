@@ -1,0 +1,7 @@
+#!/bin/sh
+# bin/xde-bar-exec
+
+while read -r cmd; do
+    # Executa o comando em background para não travar o loop
+    sh -c "$cmd" &
+done

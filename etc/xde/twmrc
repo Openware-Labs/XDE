@@ -1,0 +1,61 @@
+UsePPosition "on"
+
+Color
+{
+    BorderColor           "#4a4a4a"
+    BorderTileBackground  "#1a1a1a"
+    BorderTileForeground  "#2a2a2a"
+    TitleBackground       "#2a2a2a"
+    TitleForeground       "#d0d0d0"
+    MenuBackground        "#1a1a1a"
+    MenuForeground        "#d0d0d0"
+    MenuTitleBackground   "#3a3a3a"
+    MenuTitleForeground   "#00ff88"
+    MenuShadowColor       "#000000"
+    MenuBorderColor       "#4a4a4a"
+    IconBackground        "#1a1a1a"
+    IconForeground        "#d0d0d0"
+    IconBorderColor       "#4a4a4a"
+    PointerForeground     "#00ff88"
+    PointerBackground     "#101010"
+}
+
+menu "XDE"
+{
+    "xterm"          f.exec "xterm &"
+    "xclock"         f.exec "xclock &"
+    "xload"          f.exec "xload &"
+    "xeyes"          f.exec "xeyes &"
+    "xcalc"          f.exec "xcalc &"
+    "xedit"          f.exec "xedit &"
+    ""               f.nop
+    "Run..."         f.exec "xterm -e sh -c 'printf \"cmd: \"; read c; eval $c' &"
+    ""               f.nop
+    "Restart twm"    f.twmrc
+    "Exit XDE"       f.quit
+}
+
+menu "WindowOps"
+{
+    "Close"       f.delete
+    "Kill"        f.destroy
+    "Minimize"    f.iconify
+    "Raise"       f.raise
+}
+
+ButtonBindings
+{
+    Button3 = : root  : f.menu "XDE"
+
+    Button1 = : title : f.move
+    Button2 = : title : f.raise
+    Button3 = : title : f.menu "WindowOps"
+
+    Button1 = : icon  : f.iconify
+}
+
+RightTitleButton "/etc/xde/xde-close.xbm" = f.delete
+
+NoTitle { "bar" }
+NoBorder { "bar" }
+MakeSticky { "bar" }

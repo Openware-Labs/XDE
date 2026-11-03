@@ -1,0 +1,13 @@
+#!/bin/sh
+
+for f in /usr/share/applications/*.desktop /usr/local/share/applications/*.desktop; do
+    [ -f "$f" ] || continue
+    if grep -q "^NoDisplay=true" "$f"; then
+        continue
+    fi
+    name=$(grep -m 1 "^Name=" "$f" | cut -d'=' -f2-)
+    exec_cmd=$(grep -m 1 "^Exec=" "$f" | cut -d'=' -f2- | sed 's/ %[fFuUdDnNickvm]//g')
+    if [ -n "$name" ] && [ -n "$exec_cmd" ]; then
+        echo "$name|$exec_cmd"
+    fi
+done | sort -u
